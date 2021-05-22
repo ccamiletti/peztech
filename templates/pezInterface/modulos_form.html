@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech - Mantenedor de Módulos
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="margin-top: 20px">
+        <div class="row">
+            <div class="col text-left">
+                <h2>
+                    Crear/Editar Módulo
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="form-group">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <a class="btn btn-danger" href="{% url 'pezInterface:modulos_listar' %}">Volver</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'base/base.html' %}
+
+{% block extrastatic %}
+<style>
+    .modal-mask {
+        position: fixed;
+        z-index: 9998;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, .5);
+        display: table;
+        transition: opacity .3s ease;
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+PezTech: Inicio
+{% endblock %}
+
+{% block content %}
+
+<body onload="selectionRecord();">
+    <!--1024 X 600 (NO 800 x 450) -->
+    <a href="{% url 'pezInterface:iniciar_seleccion' %}" id="activeRecognizeVoice" hidden="true">Iniciar</a>
+
+    <div class="row col-md-12" style="margin-top: 50px"></div>
+    <div id="summaryRecordContainer" style="display: none; margin-bottom: 30px"></div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-success" id="startRecordBtn"
+                style="padding: 110px; font-size: 30px; border-radius: 200px">
+                Iniciar grabación
+            </button>
+        </div>
+        <div class="col-md-6">
+            <button type="button" class="btn btn-danger" id="finishRecordBtn"
+                style="padding: 110px; font-size: 30px; border-radius: 200px" onclick="stopRecordConfirm()">
+                Finalizar grabación
+            </button>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Finalizar Grabación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="font-size: 18px">
+                    ¿Desea guardar el archivo de video por la grabación realizada?
+                    </br>
+                </div>
+                <div class="modal-footer" style="display: initial !important; text-align: center">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="stopRecord('N')"
+                        style="padding: 15px">No</button>
+                    <button type="button" class="btn btn-primary" onclick="stopRecord('Y')"
+                        style="padding: 15px; margin-left: 15px; padding-left: 18px; padding-right: 18px;">Si</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-mask" style="display: none">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" style="font-size: 15px" id="loadModalCenterLongTitle">Procesando...</div>
+                </div>
+                <div class="modal-body" style="margin: 10px auto 20px auto; height: 100px">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+{% block extrajs %}
+<script>
+    const recordData = []
+
+    jQuery(document).ready(function () {
+        let recordInProcess = '{{ recordInProcess }}';        
+        if (recordInProcess === "Y") {
+            let recordId = "";
+            let recordObservation = "";
+            let recordStartTime = "";
+
+            {% for rec in record %}
+            recordId = '{{ rec.id }}'
+            recordObservation = '{{ rec.observation }}'
+            recordStartTime = '{{ rec.startTime }}'
+            {% endfor %}
+
+            let dataRecord = {
+                recordId: recordId,
+                recordObservation: recordObservation,
+                recordStartTime: recordStartTime,
+            }
+
+            recordData.push(dataRecord)
+
+            $("#startRecordBtn").prop('disabled', true).html('' +
+                '<div id="containerLoad" style="transform: translateX(40px);">\n' +
+                '<center>\n' +
+                '<p>Grabando</p>\n' +
+                '<div class="loader"></div>\n' +
+                '</center>\n' +
+                '</div>').css({
+                    'padding': '85px',
+                    'padding-right': '190px'
+                });
+
+            $("#summaryRecordContainer").html('' +
+                '<h5>Grabando: ' + recordObservation + '</h5>' +
+                '<h5>Hora de Inicio: ' + recordStartTime + '</h5>').css("display", "");
+        } else {
+            $("#finishRecordBtn").prop('disabled', true);
+        }
+    });
+
+    function selectionRecord() {
+        let recordInProcess = '{{ recordInProcess }}';
+        if (recordInProcess === "N") {
+            event.preventDefault();
+            document.getElementById('activeRecognizeVoice').click();
+        }
+    }
+
+    function stopRecordConfirm() {
+        event.preventDefault();
+        $("#exampleModal").modal();
+    }
+
+    function stopRecord(saveVideo) {
+        event.preventDefault();
+        $(".modal-mask").css("display", "");
+
+        var record_id = recordData[0].recordId;
+        $.ajax({
+            url: '{% url 'pezInterface:finalizar' %}',
+            data: {
+                record_id: record_id,
+                save_video: saveVideo
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data.result);
+                if (data.result === "success") {
+                    window.location.href = '{% url 'pezInterface:index' %}';
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

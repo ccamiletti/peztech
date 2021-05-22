@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech
+{% endblock %}
+
+{% block content %}
+    <div class="row" style="margin-top: 10px">
+        <div class="col-md-12" style="margin-top: 20px">
+            <h3 style="margin-bottom: 20px">Cierre forzado de grabación procederá a eliminar todas las grabaciones
+                que esten pendientes y dejará la aplicación nuevamente disponible. <br><br>
+                Este proceso no se puede deshacer. <br><br>
+                ¿Desea continuar?</h3>
+            <a class="btn btn-danger" href="{% url 'pezInterface:cierre_forzado' %}">Sí, continuar</a>
+            <a class="btn btn-secondary" href="{% url 'pezInterface:otros' %}">Cancelar</a>
+        </div>
+    </div>
+{% endblock %}

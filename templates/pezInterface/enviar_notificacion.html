@@ -1,0 +1,138 @@
+{% extends 'base/base.html' %}
+
+{% block extrastatic %}
+    <style>
+        .modal-mask {
+            position: fixed;
+            z-index: 9998;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            display: table;
+            transition: opacity .3s ease;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block title %}
+    PezTech
+{% endblock %}
+
+{% block content %}
+    <div id="container-modal-process" style="display: none">
+        <center>
+            <br><br>
+            <h1>Procesando...</h1><br><br>
+            <div class="loader"></div>
+        </center>
+    </div>
+    <div class="spinner-grow" style="width: 3rem; height: 3rem; display: none" role="status" id="loading-modal">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="container" style="margin-top: 20px">
+        <div class="row">
+            <div class="col text-left">
+                <h2>
+                    Enviar Email Notificación
+                </h2>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="form-group">
+
+                                <h3 style="margin-bottom: 20px">Se enviará Notificación por Email del video:</h3>
+                                <h4 style="color: blue">
+                                    {{ centro.nombre }} - {{ record.observation }}
+                                </h4>
+                                <br>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">URL vídeo</label>
+                                    <input type="text" class="form-control" id="url_video" aria-describedby="emailHelp"
+                                           placeholder="Ingrese URL vídeo" title="URL vídeo">
+                                </div>
+
+                                <a class="btn btn-success" href="#"
+                                   onclick="enviarEmail('{{ centro.nombre }}', '{{ record.observation }}', '{{ record.id }}')">Enviar</a>
+                                <a class="btn btn-danger" href="{% url 'pezInterface:grabaciones_pendientes' %}">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-mask" style="display: none">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" style="font-size: 15px" id="loadModalCenterLongTitle">Procesando...</div>
+                </div>
+                <div class="modal-body" style="margin: 10px auto 20px auto; height: 100px">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script>
+        function enviarEmail(nombreCentro, observacion, id_record) {
+            event.preventDefault()
+
+            const url_video = $("#url_video").val();
+
+            if (!url_video || url_video.trim() === "") {
+                alert("Debe indicar una URL para el vídeo")
+            } else {
+                const data = {
+                    url_video: url_video,
+                    nombre_centro: nombreCentro,
+                    observacion: observacion,
+                    id_record: id_record
+                }
+
+                $(".modal-mask").css("display", "");
+
+                $.ajax({
+                    url: '{% url 'pezInterface:enviar_email' %}',
+                    data: {
+                        data: JSON.stringify(data)
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.result === "success") {
+                            window.location.href = '{% url 'pezInterface:grabaciones_pendientes' %}';
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+{% endblock %}
+

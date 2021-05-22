@@ -1,0 +1,16 @@
+{
+  "loggingPath": "D:/Documentos/PythonProjects/peztech/logs/",
+  "jsonPath": "D:/Documentos/PythonProjects/peztech/static/obs.json",
+  "obsPath": "C:/Program Files/obs-studio/bin/64bit/",
+  "obsFileName": "obs64.exe",
+  "so": "Windows",
+  "userSoPassword": "",
+  "extensionVideoRecording": ".mp4",
+  "folderVideoRecording": "D:/Videos/",
+  "folderFailedVideoRecording": "D:/Videos/pendingRemove/",
+  "folderToUploadVideoRecording": "D:/Videos/pendingUpload/",
+  "urlToUploadRecordingStream": "https://web.microsoftstream.com/upload",
+  "webDriverPath": "C:/dchrome/chromedriver.exe",
+  "webDriverName": "chromedriver.exe",
+  "modalityAutomatizationWeb": "web"
+}

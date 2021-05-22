@@ -1,0 +1,60 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" style="margin-top: 20px">
+            <h2>Grabaciones Pendientes de carga en MS Stream</h2>
+        </div>
+        <div class="col-md-12" style="margin-top: 15px">
+            {% if records %}
+                <table class="table table-striped" style="text-align: center">
+                    <thead>
+                    <tr>
+                        <th scope="col" style="width: 20%">Observación</th>
+                        <th scope="col" style="width: 20%">Fecha Grabación</th>
+                        <th scope="col" style="width: 20%">Estado</th>
+                        <th scope="col" style="width: 40%" colspan="2">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in records %}
+                        <tr>
+                            <th>{{ record.observation }}</th>
+                            <td>
+                                {{ record.startTime }}
+                            </td>
+                            <td>
+                                {% if record.statusUpload == "FINISH" %}
+                                    Finalizado
+                                {% elif record.statusUpload == "IN_PROCESS" %}
+                                    En Proceso
+                                {% else %}
+                                    Pendiente
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm"
+                                   href="{% url 'pezInterface:enviar_notificacion' record.id %}">
+                                    Enviar Email Notificación
+                                </a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm"
+                                   href="{% url 'pezInterface:proceso_carga_confirmacion' record.id %}">
+                                    Proceso manual de carga
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h1>No hay registro de grabaciones pendientes</h1>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

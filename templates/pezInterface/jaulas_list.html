@@ -1,0 +1,104 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech
+{% endblock %}
+
+{% block content %}
+    <!--<div class="modal fade" id="modalModule" tabindex="-1" role="dialog" aria-labelledby="modalModuleLabel"
+         aria-hidden="true" style="display: none">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalModuleLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <div class="modal fade" id="addModuleModal" tabindex="-1" role="dialog" aria-labelledby="addModuleModalLabel"
+         aria-hidden="true" style="display: none">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModuleModalLabel">Crear Módulo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Form
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-top: 20px">
+            <h2>Jaulas</h2>
+        </div>
+        <div class="col-md-12">
+            <a href="{% url 'pezInterface:jaulas_nuevo' id_modulo %}" style="text-decoration:none">
+                <button type="button" class="btn btn-success btn-sm" style="float: right; margin-bottom: 10px">
+                    Agregar Jaula
+                </button>
+            </a>
+            <!--<button type="button" class="btn btn-success btn-sm" style="float: right; margin-bottom: 10px"
+                    onclick="addModuleModal()">
+                Agregar Módulo
+            </button>-->
+        </div>
+        <div class="col-md-12">
+            {% if jaulas %}
+                <table class="table table-striped" style="text-align: center">
+                    <thead>
+                    <tr>
+                        <th scope="col">Número Módulo</th>
+                        <th scope="col" style="width: 40%">Número Jaula</th>
+                        <th scope="col" style="width: 40%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for jaula in jaulas %}
+                        <tr>
+                            <th>{{ jaula.modulo.moduloNumero }}</th>
+                            <td>{{ jaula.jaulaNumero }}</td>
+                            <td>
+                                <a class="btn btn-danger btn-sm"
+                                   href="{% url 'pezInterface:jaulas_eliminar' jaula.id %}">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h3>No hay registro de Jaulas para el Módulo N° {{ id_modulo }} </h3>
+            {% endif %}
+        </div>
+        <br>
+        <br>
+        <div class="col-md-12">
+            <a href="{% url 'pezInterface:modulos_listar' %}" style="text-decoration:none">
+                <button type="button" class="btn btn-primary btn-sm" style="float: left; margin-bottom: 10px">
+                    Volver
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script>
+    </script>
+{% endblock %}

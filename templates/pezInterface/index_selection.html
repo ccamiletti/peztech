@@ -1,0 +1,197 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech - Iniciar Grabación - Jaulas
+{% endblock %}
+
+{% block extrastatic %}
+    <style>
+        .modal-mask {
+            position: fixed;
+            z-index: 9998;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            display: table;
+            transition: opacity .3s ease;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<body onload="getJaulasByModulo()">
+    <a href="{% url 'pezInterface:jaulas_listar_ajax' %}" id="getJaulas" hidden="true">getting</a>
+
+    <div class="row" style="margin-top: 20px; margin-left: 0px;">
+        <div class="form-group">
+            <a href="#" class="btn btn-success btn-lg active" role="button" aria-pressed="true"
+               onclick="startRecord(event)">
+                Comenzar Grabación
+            </a>
+            <a class="btn btn-danger btn-lg" href="{% url 'pezInterface:index' %}" role="button" aria-pressed="true">
+                Volver
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-top: 20px; margin-bottom: 20px">
+            <h3>Antes de comenzar, seleccione Jaulas a grabar:</h3>
+        </div>
+    </div>
+    <div class="row" id="jaulas" style="margin-top: 10px;">
+    </div>
+
+    <div class="modal-mask" style="display: none">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" style="font-size: 15px" id="loadModalCenterLongTitle">Procesando...</div>
+                </div>
+                <div class="modal-body" style="margin: 10px auto 20px auto; height: 100px">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+{% endblock %}
+{% block extrajs %}
+    <script>
+        const modulosSelectedList = [];
+        const modulosAndJaulasSelectedList = [];
+
+        function getJaulasByModulo() {
+            $.ajax({
+                url: '{% url 'pezInterface:jaulas_listar_ajax' %}',
+                dataType: 'json',
+                success: function (data) {
+                    var html = "";
+                    var withJaulas = false;
+                    if (!$.isEmptyObject(data)) {
+                        $("#jaula_title").css('display', '');
+                        html = '<div></div>';
+                        data.forEach(function (d) {
+                            html += '<div class="col-md-2 btn-group btn-group-toggle" data-toggle="buttons" style="margin-top: 10px">\n' +
+                                '<label for="" class="btn btn-secondary" style="padding: 40px;"\n' +
+                                'onclick="checkedJaulas(' + d.id_jaula + ', ' + d.jaulaNumero + ', this, ' + d.modulo_id + ',  ' + d.numero_modulo + ')" ' + 'id="jaula_' + d.id_jaula + '">\n' +
+                                '<input type="checkbox" value="' + d.id_jaula + '" name="jaula_checked"> Jaula:'+ d.jaulaNumero + " Modulo:" + d.numero_modulo + '</label>\n' +
+                                '</div>'
+                        });
+
+                        withJaulas = true;
+                        bienvenida()
+                    } else {
+                        html = '<div class="col-md-12" style="margin-top: 20px;" id="jaula_title">\n' +
+                            '<h5>No existen Jaulas.</h5>\n' +
+                            '</div>';
+                    }
+
+                    $("#jaulas").html(html);
+                }
+            });
+        }
+
+        function getPosition(id_jaula, modulosAndJaulasSelectedList) {
+            index = -1
+            for (i=0; i < modulosAndJaulasSelectedList.length; i++) {
+                if (id_jaula === modulosAndJaulasSelectedList[i].id_jaula) {
+                    index = i;
+                }
+            }
+            return index
+        }
+
+        function checkedJaulas(id_jaula, numero_jaula, inputJaula, id_modulo, numero_modulo) {
+            $('#' + inputJaula.id).find('input').each(function () {
+                if ($(this).attr("checked")) {
+                    $(this).removeAttr("checked");
+                    $("#" + inputJaula.id).removeClass("btn-success").addClass("btn-secondary");
+                    position = getPosition(id_jaula, modulosAndJaulasSelectedList);
+                    modulosAndJaulasSelectedList.splice(position, 1)
+                } else {
+                    var jaulaObj = {
+                        moduloId: id_modulo,
+                        moduloNumero: numero_modulo,
+                        id_jaula: id_jaula,
+                        numero_jaula: numero_jaula
+                    }
+                    $(this).attr("checked", "checked");
+                    $("#" + inputJaula.id).removeClass("btn-secondary").addClass("btn-success");
+                    modulosAndJaulasSelectedList.push(jaulaObj)
+                }
+            });
+        }
+
+        function findRepeated(id_jaula) {
+            return modulosAndJaulasSelectedList.find((value) => {
+                if (value.moduloId === id_modulo) {
+                    return true;
+                }
+            });
+        }
+
+        function startRecord() {
+            event.preventDefault();
+
+            if (modulosAndJaulasSelectedList.length > 0) {
+                $(".modal-mask").css("display", "");
+
+                $.ajax({
+                    url: '{% url 'pezInterface:iniciar' %}',
+                    data: {
+                        data: JSON.stringify(modulosAndJaulasSelectedList)
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.result === "success") {
+                            window.location.href = '{% url 'pezInterface:index' %}';
+                        }
+                    }
+                });
+            } else {
+                alert("Debe seleccionar al menos una Jaula")
+            }
+        }
+
+        function bienvenida() {
+            $.ajax({
+                 url: '{% url 'pezInterface:bienvenida' %}',
+                 success: function (data) {
+                     console.log("listening welcome message")
+                     getJaulaByVoice();
+                 }
+             });
+        }
+
+        function getJaulaByVoice() {
+            $.ajax({
+                url: '{% url 'pezInterface:getJaulaByVoice' %}',
+                success: function (data) {
+                    alert(data);
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

@@ -1,0 +1,13 @@
+https://obsproject.com/docs/reference-frontend-api.html
+https://obsproject.com/docs/scripting.html
+https://obsproject.com/forum/threads/script-on-startup.121500/
+
+Ruta de los logs:
+C:\Users\JCARDENAS\AppData\Roaming\obs-studio\logs
+RASP-PI: /home/peztech/.config/obs-studio/logs
+
+Ruta del  json de configuraciones:
+C:\Users\JCARDENAS\AppData\Roaming\obs-studio\basic\scenes
+
+OBS
+Archivo -> Configuración -> Salida -> Ruta de Grabación

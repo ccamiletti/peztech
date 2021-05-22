@@ -1,0 +1,16 @@
+{
+  "loggingPath": "/var/log/peztech/",
+  "jsonPath": "/peztech/static/obs.json",
+  "obsPath": "/peztech/static/",
+  "obsFileName": "./OBStudio.sh",
+  "so": "Linux",
+  "userSoPassword": "qwe12qwe",
+  "extensionVideoRecording": ".ts",
+  "folderVideoRecording": "/home/peztech/Vídeos/peztech/",
+  "folderFailedVideoRecording": "/home/peztech/Vídeos/peztech/pendingRemove/",
+  "folderToUploadVideoRecording": "/home/peztech/Vídeos/peztech/pendingUpload/",
+  "urlToUploadRecordingStream": "https://web.microsoftstream.com/upload",
+  "webDriverPath": "/peztech/dchrome/chromedriver",
+  "webDriverName": "chromedriver",
+  "modalityAutomatizationWeb": "no_web"
+}

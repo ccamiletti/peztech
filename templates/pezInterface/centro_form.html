@@ -1,0 +1,290 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech - Mantenedor de Configuraciones del Centro
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="margin-top: 20px">
+        <div class="row">
+            <div class="col text-left">
+                <h2>
+                    Datos del Centro
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% if centro %}
+                                <input type="hidden" name="id" value="{{ centro.id }}"/>
+                            {% endif %}
+                            <div class="row bg-white">
+                                <div class="col-md-3">
+                                    <label for="id_nombre">Nombre del Centro:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="nombre" class="form-control" required=""
+                                           id="id_nombre" {% if centro %} value="{{ centro.nombre }}" {% endif %} >
+                                </div>
+                                <!--<div class="invalid-feedback">
+                                    Please provide a valid city.
+                                </div>-->
+                            </div>
+                            {% if emails %}
+                                {% for emailData in emails %}
+                                    <div id="email_{{ forloop.counter0 }}">
+                                        <div class="row bg-white" style="margin-top: 10px">
+                                            <div class="col-md-3">
+                                                <label for="id_email_1">
+                                                    {% if forloop.counter0 == 0 %}
+                                                        Email destinatario:
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="email" name="emails" class="form-control" required=""
+                                                       id="id_email_1" value="{{ emailData.email }}">
+                                            </div>
+                                            {% if forloop.counter0 == 0 %}
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-primary btn-sm"
+                                                            onclick="addEmailRow(this)">Agregar Email
+                                                    </button>
+                                                </div>
+                                            {% else %}
+                                                <div class="col-md-3">
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                            onclick="deleteEmailRow({{ forloop.counter0 }})">
+                                                        Eliminar Email
+                                                    </button>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="row bg-white" style="margin-top: 10px">
+                                    <div class="col-md-3">
+                                        <label for="id_email_1">Email destinatario:</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="email" name="emails" class="form-control" required=""
+                                               id="id_email_1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="addEmailRow(this)">Agregar Email
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div id="containerEmails">
+                            </div>
+                            <hr>
+                            <h5>Stream</h5>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_canalStream">
+                                        Nombre Canal:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="canalStream" class="form-control" required=""
+                                           id="id_canalStream"
+                                            {% if centro %} value="{{ centro.canalStream }}" {% endif %}>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_rangoHorarioDesde">Horario para comienzo de carga de vídeos
+                                        (UTC-4):</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="id_rangoHorarioDesde" name="rangoHorarioDesde">
+                                        {% if centro %}
+                                            <option value="{{ centro.rangoHorarioDesde }}">{{ centro.rangoHorarioDesde }}:00
+                                                hrs.
+                                            </option>
+                                            <option></option>
+                                        {% endif %}
+                                        <option value="0">00:00 hrs.</option>
+                                        <option value="1">01:00 hrs.</option>
+                                        <option value="2">02:00 hrs.</option>
+                                        <option value="3">03:00 hrs.</option>
+                                        <option value="4">04:00 hrs.</option>
+                                        <option value="5">05:00 hrs.</option>
+                                        <option value="6">06:00 hrs.</option>
+                                        <option value="7">07:00 hrs.</option>
+                                        <option value="8">08:00 hrs.</option>
+                                        <option value="9">09:00 hrs.</option>
+                                        <option value="10">10:00 hrs.</option>
+                                        <option value="11">11:00 hrs.</option>
+                                        <option value="12">12:00 hrs.</option>
+                                        <option value="13">13:00 hrs.</option>
+                                        <option value="14">14:00 hrs.</option>
+                                        <option value="15">15:00 hrs.</option>
+                                        <option value="16">16:00 hrs.</option>
+                                        <option value="17">17:00 hrs.</option>
+                                        <option value="18">18:00 hrs.</option>
+                                        <option value="19">19:00 hrs.</option>
+                                        <option value="20">20:00 hrs.</option>
+                                        <option value="21">21:00 hrs.</option>
+                                        <option value="22">22:00 hrs.</option>
+                                        <option value="23">23:00 hrs.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_rangoHorarioHasta">Horario para fin de carga de vídeos
+                                        (UTC-4):</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="id_rangoHorarioHasta" name="rangoHorarioHasta">
+                                        {% if centro %}
+                                            <option value="{{ centro.rangoHorarioHasta }}">{{ centro.rangoHorarioHasta }}:00
+                                                hrs.
+                                            </option>
+                                            <option></option>
+                                        {% endif %}
+                                        <option value="0">00:00 hrs.</option>
+                                        <option value="1">01:00 hrs.</option>
+                                        <option value="2">02:00 hrs.</option>
+                                        <option value="3">03:00 hrs.</option>
+                                        <option value="4">04:00 hrs.</option>
+                                        <option value="5">05:00 hrs.</option>
+                                        <option value="6">06:00 hrs.</option>
+                                        <option value="7">07:00 hrs.</option>
+                                        <option value="8">08:00 hrs.</option>
+                                        <option value="9">09:00 hrs.</option>
+                                        <option value="10">10:00 hrs.</option>
+                                        <option value="11">11:00 hrs.</option>
+                                        <option value="12">12:00 hrs.</option>
+                                        <option value="13">13:00 hrs.</option>
+                                        <option value="14">14:00 hrs.</option>
+                                        <option value="15">15:00 hrs.</option>
+                                        <option value="16">16:00 hrs.</option>
+                                        <option value="17">17:00 hrs.</option>
+                                        <option value="18">18:00 hrs.</option>
+                                        <option value="19">19:00 hrs.</option>
+                                        <option value="20">20:00 hrs.</option>
+                                        <option value="21">21:00 hrs.</option>
+                                        <option value="22">22:00 hrs.</option>
+                                        <option value="23">23:00 hrs.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_diasAlmacenamientoStream">
+                                        Remover vídeos de MS Stream despues de cuantos días?:
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" name="diasAlmacenamientoStream" class="form-control"
+                                           required="" id="id_diasAlmacenamientoStream"
+                                            {% if centro %} value="{{ centro.diasAlmacenamientoStream }}" {% endif %}>
+                                </div>
+                            </div>
+                            <hr>
+                            <h5>SMTP</h5>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_smtpHost">Host:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="smtpHost" class="form-control" required=""
+                                           id="id_smtpHost" {% if centro %} value="{{ centro.smtpHost }}" {% endif %}>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_smtpUsuario">Usuario:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="smtpUsuario" class="form-control" required=""
+                                           id="id_smtpUsuario" {% if centro %}
+                                           value="{{ centro.smtpUsuario }}" {% endif %}>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_smtpContrasena">Contraseña:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="password" name="smtpContrasena" class="form-control" required=""
+                                           id="id_smtpContrasena" {% if centro %}
+                                           value="{{ centro.smtpContrasena }}" {% endif %}>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_smtpSecure">Seguridad:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <select name="smtpSecure" required="" id="id_smtpSecure" class="form-control">
+                                        {% if centro %}
+                                            <option value="{{ centro.smtpSecure }}">{{ centro.smtpSecure }}</option>
+                                            <option></option>
+                                        {% endif %}
+                                        <option value="NONE">None</option>
+                                        <option value="STARTTLS">STARTTLS</option>
+                                        <option value="SSL">SSL</option>
+                                        <option value="TLS">TLS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row bg-white" style="margin-top: 10px">
+                                <div class="col-md-3">
+                                    <label for="id_smtpPuerto">Puerto:</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" name="smtpPuerto" class="form-control" required=""
+                                           id="id_smtpPuerto" {% if centro %}
+                                           value="{{ centro.smtpPuerto }}" {% endif %}>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px">
+                                <button type="submit" class="btn btn-success">Guardar</button>
+                                <a class="btn btn-danger" href="{% url 'pezInterface:centro_listar' %}">Volver</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script>
+        let emailCount = 0;
+
+        function addEmailRow() {
+            emailCount += 1;
+
+            var actualHtml = $("#containerEmails").html();
+            actualHtml += '<div id="email_' + emailCount + '">' +
+                '<div class="row bg-white" style="margin-top: 10px">\n' +
+                '<div class="col-md-3">\n' +
+                '</div>\n' +
+                '<div class="col-md-6">\n' +
+                '<input type="email" name="emails" class="form-control" required="">\n' +
+                '</div>\n' +
+                '<div class="col-md-3">\n' +
+                '<button type="button" class="btn btn-danger btn-sm" onclick="deleteEmailRow(' + emailCount + ')">Eliminar Email</button>\n' +
+                '</div>\n' +
+                '</div>\n' +
+                '</div>'
+
+            $("#containerEmails").html(actualHtml);
+        }
+
+        function deleteEmailRow(buttonDelete) {
+            $("#email_" + buttonDelete).remove();
+        }
+    </script>
+{% endblock %}

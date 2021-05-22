@@ -1,0 +1,158 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech - Mantenedor de Configuraciones del Centro
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" style="margin-top: 20px">
+            <h2>
+                Datos del Centro
+            </h2>
+        </div>
+        <div class="col-md-12">
+            {% if centro %}
+                {% for data in centro %}
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row bg-white">
+                                    <div class="col-md-3">
+                                        <p class="font-weight-bold">Nombre del Centro</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.nombre }}</p>
+                                    </div>
+                                </div>
+                                {% if emails %}
+                                    {% for emailData in emails %}
+                                        <div class="row bg-white">
+                                            <div class="col-md-3">
+                                                <p class="font-weight-bold">
+                                                    {% if forloop.counter == 1 %}
+                                                        Email destinatario
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                            :
+                                            <div class="col-md-6">
+                                                <p>{{ emailData.email }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                                <hr>
+                                <div class="row bg-white">
+                                    <div class="col-md-12">
+                                        <h5>Stream</h5>
+                                    </div>
+                                    <br><br>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Nombre Canal</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.canalStream }}</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Horario para comienzo de carga de vídeos (UTC-4)</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.rangoHorarioDesde }}:00 hrs.</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Horario para fin de carga de vídeos (UTC-4)</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.rangoHorarioHasta }}:00 hrs.</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Remover vídeos de MS Stream despues de</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.diasAlmacenamientoStream }} días</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row bg-white">
+                                    <div class="col-md-12">
+                                        <h5>SMTP</h5>
+                                    </div>
+                                    <br><br>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Host</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.smtpHost }}</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Usuario</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.smtpUsuario }}</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Contraseña</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>**********</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Seguridad</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.smtpSecure }}</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-white">
+                                    <div class="col-md-5">
+                                        <p class="font-weight-bold">Puerto</p>
+                                    </div>
+                                    :
+                                    <div class="col-md-6">
+                                        <p>{{ data.smtpPuerto }}</p>
+                                    </div>
+                                </div>
+                                <a class="btn btn-info btn-sm"
+                                   href="{% url 'pezInterface:centro_editar' data.id %}">Editar</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <br>
+                <h4>No hay registro del Centro</h4>
+                <a href="{% url 'pezInterface:centro_nuevo' %}" style="text-decoration:none">
+                    <button type="button" class="btn btn-primary btn-sm" style="float: left; margin-bottom: 10px">
+                        Ingresar Datos
+                    </button>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

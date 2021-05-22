@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    PezTech - Eliminar Módulo
+{% endblock %}
+
+{% block content %}
+    <div class="row" style="margin-top: 10px">
+        <div class="col-md-12" style="margin-top: 20px">
+            <form method="post">
+                {% csrf_token %}
+                <h3>¿Desea eliminar el Módulo N° {{ modulo.moduloNumero }}?</h3>
+                <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+                <a class="btn btn-secondary" href="{% url 'pezInterface:modulos_listar' %}">Cancelar</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
